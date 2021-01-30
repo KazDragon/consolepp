@@ -1,5 +1,6 @@
 #include "consolepp/console.hpp"
 #include <boost/make_unique.hpp>
+#include <sys/ioctl.h>
 #include <termios.h>
 #include <unistd.h>
 
@@ -39,6 +40,22 @@ void restore_console_mode(int descriptor, termios const &attributes)
     ::tcsetattr(descriptor, TCSANOW, &attributes);
 }
 
+extent get_console_size(int descriptor)
+{
+    auto const window_size = [descriptor]
+    {
+        winsize ws;
+        if (ioctl(descriptor, TIOCGWINSZ, &ws) < 0)
+        {
+            throw invalid_console();
+        }
+
+        return ws;
+    }();
+
+    return {window_size.ws_col, window_size.ws_row};
+}
+
 }
 
 struct console::impl
@@ -73,6 +90,11 @@ console::~console() = default;
 void console::write(bytes data)
 {
     stream_.write_some(boost::asio::const_buffer{data.begin(), data.size()});
+}
+
+extent console::size() const
+{
+    return get_console_size(STDIN_FILENO);
 }
 
 }

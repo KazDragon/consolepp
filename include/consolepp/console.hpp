@@ -9,6 +9,12 @@ namespace consolepp {
 
 struct invalid_console {};
 
+struct extent
+{
+    int width;
+    int height;    
+};
+
 class CONSOLEPP_EXPORT console final
 {
 public:
@@ -32,6 +38,8 @@ public:
                     bytes{read_buffer_.data(), bytes_transferred});
             });
     }
+
+    extent size() const;
 
 private:
     struct impl;
