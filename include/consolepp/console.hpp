@@ -2,6 +2,7 @@
 
 #include "consolepp/core.hpp"
 #include <boost/asio.hpp>
+#include <boost/signals2.hpp>
 #include <memory>
 #include <utility>
 
@@ -40,6 +41,8 @@ public:
     }
 
     extent size() const;
+
+    boost::signals2::signal<void ()> on_size_changed;
 
 private:
     struct impl;

@@ -60,25 +60,43 @@ extent get_console_size(int descriptor)
 
 struct console::impl
 {
-    impl(boost::asio::io_context &ctx)
-      : io_context_(ctx),
-        old_attributes_(set_console_mode(STDIN_FILENO)),
-        console_descriptor_(::dup(STDIN_FILENO))
+    impl(console &self, boost::asio::io_context &ctx)
+      : self_(self),
+        io_context_{ctx},
+        signals_{io_context_, SIGWINCH},
+        old_attributes_{set_console_mode(STDIN_FILENO)},
+        console_descriptor_{::dup(STDIN_FILENO)}
     {
+        await_console_size_change();
     }
 
     ~impl()
     {
+        signals_.cancel();
         restore_console_mode(STDIN_FILENO, old_attributes_);
     }
 
+    console &self_;
     boost::asio::io_context &io_context_;
+    boost::asio::signal_set signals_;
     termios old_attributes_;
     int console_descriptor_;
+
+private:
+    void await_console_size_change()
+    {
+        signals_.async_wait(
+            [this](boost::system::error_code const &ec, int signal_number)
+            {
+                assert(signal_number == SIGWINCH);
+                self_.on_size_changed();
+                await_console_size_change();
+            });
+    }
 };
 
 console::console(boost::asio::io_context &ctx)
-  : pimpl_(boost::make_unique<impl>(ctx)),
+  : pimpl_(boost::make_unique<impl>(*this, ctx)),
     stream_(ctx, pimpl_->console_descriptor_),
     read_buffer_(default_read_buffer_size, '\0')
     

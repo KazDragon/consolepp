@@ -112,7 +112,10 @@ add_library(consolepp)
 
 target_sources(consolepp
     PRIVATE
+        include/consolepp/detail/export.hpp
         include/consolepp/console.hpp
+        include/consolepp/core.hpp
+        include/consolepp/version.hpp
 
         src/console.cpp
 )
