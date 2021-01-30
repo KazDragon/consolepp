@@ -10,7 +10,7 @@ class ConanConsolepp(ConanFile):
     generators = "cmake"
     exports = "*.hpp", "*.in", "*.cpp", "CMakeLists.txt", "*.md", "LICENSE"
     description = "A library for interacting with the Console"
-    requires = ("boost/[>=1.69]")
+    requires = ("boost/[>=1.69]", "gsl-lite/[=0.34]")
     build_requires = ("gtest/[>=1.8.1]")
     options = {"shared": [True, False], "coverage": [True, False], "sanitize" : ["off", "address"]}
     default_options = {"shared": False, "coverage": False, "sanitize": "off"}

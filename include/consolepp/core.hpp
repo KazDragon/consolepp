@@ -19,4 +19,22 @@ using bytes = gsl::span<byte const>;
 // optimization, meaning that most trivial cases will not cause an allocation.
 using byte_storage = std::basic_string<byte>;
 
+namespace literals {
+
+// A simple function to convert from string literals to stored bytes.
+inline byte_storage operator ""_cb(char const *text, size_t length)
+{
+    byte_storage result;
+    result.reserve(length);
+
+    for (auto ch : gsl::span<char const>{text, length})
+    {
+        result.push_back(static_cast<consolepp::byte>(ch));
+    }
+
+    return result;
+}
+
+}
+
 }

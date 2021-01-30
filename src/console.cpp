@@ -7,6 +7,8 @@ namespace consolepp {
 
 namespace {
 
+constexpr int default_read_buffer_size = 1024;
+
 termios set_console_mode(int descriptor)
 {
     termios old_attributes;
@@ -34,7 +36,7 @@ termios set_console_mode(int descriptor)
 
 void restore_console_mode(int descriptor, termios const &attributes)
 {
-    tcsetattr(descriptor, TCSANOW, &attributes);
+    ::tcsetattr(descriptor, TCSANOW, &attributes);
 }
 
 }
@@ -43,29 +45,34 @@ struct console::impl
 {
     impl(boost::asio::io_context &ctx)
       : io_context_(ctx),
-        console_descriptor_(::dup(STDIN_FILENO)),
-        old_attributes_(set_console_mode(console_descriptor_)),
-        stream_(io_context_, console_descriptor_)
+        old_attributes_(set_console_mode(STDIN_FILENO)),
+        console_descriptor_(::dup(STDIN_FILENO))
     {
     }
 
     ~impl()
     {
-        restore_console_mode(console_descriptor_, old_attributes_);
+        restore_console_mode(STDIN_FILENO, old_attributes_);
     }
 
     boost::asio::io_context &io_context_;
-    int console_descriptor_;
     termios old_attributes_;
-    boost::asio::posix::stream_descriptor stream_;
-
+    int console_descriptor_;
 };
 
 console::console(boost::asio::io_context &ctx)
-  : pimpl_(boost::make_unique<impl>(ctx))
+  : pimpl_(boost::make_unique<impl>(ctx)),
+    stream_(ctx, pimpl_->console_descriptor_),
+    read_buffer_(default_read_buffer_size, '\0')
+    
 {
 }
 
 console::~console() = default;
+
+void console::write(bytes data)
+{
+    stream_.write_some(boost::asio::const_buffer{data.begin(), data.size()});
+}
 
 }
