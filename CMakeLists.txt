@@ -33,7 +33,7 @@ if (DOXYGEN_FOUND)
         ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         @ONLY)
 
-    add_custom_target(CONSOLEPP_doc
+    add_custom_target(consolepp_doc
         ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         WORKING_DIRECTORY
             ${CMAKE_CURRENT_BINARY_DIR}
@@ -59,7 +59,11 @@ set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 14)
 
 if (CONSOLEPP_USE_CONAN)
-    set(CONSOLEPP_PUBLIC_LIBRARIES)
+    set(CONSOLEPP_PUBLIC_LIBRARIES
+        CONAN_PKG::boost
+        CONAN_PKG::gsl-lite
+    )
+
     set(CONSOLEPP_PRIVATE_LIBRARIES)
     set(CONSOLEPP_TESTER_LIBRARIES
         consolepp
@@ -71,7 +75,17 @@ else()
         find_package(GTest REQUIRED)
     endif()
 
-    set(CONSOLEPP_PUBLIC_LIBRARIES)
+    # Console++ requires at least Boost 1.69.
+    find_package(Boost 1.69.0 REQUIRED COMPONENTS container)
+
+    # Console++ requires exactly version 0.34 of gsl-lite
+    find_package(gsl-lite 0.34.0 EXACT REQUIRED)
+
+    set(CONSOLEPP_PUBLIC_LIBRARIES
+        Boost::boost
+        gsl::gsl-lite
+    )
+
     set(CONSOLEPP_PRIVATE_LIBRARIES)
     set(CONSOLEPP_TESTER_LIBRARIES
         consolepp
@@ -98,7 +112,12 @@ add_library(consolepp)
 
 target_sources(consolepp
     PRIVATE
-        src/dummy.cpp
+        include/consolepp/detail/export.hpp
+        include/consolepp/console.hpp
+        include/consolepp/core.hpp
+        include/consolepp/version.hpp
+
+        src/console.cpp
 )
 
 target_link_libraries(consolepp
