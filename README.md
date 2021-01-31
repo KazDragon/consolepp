@@ -10,14 +10,14 @@
 Console++ is a small framework for interacting with the console on a character-at-a-time basis.  Used together with Terminal++ and Munin, this
 library can form the foundation of any graphical terminal application.
 
-# Requirements
+## Requirements
 
 Console++ requires a C++14 compiler and the following libraries:
-  * Boost (At least version 1.69.0)
-  * GSL-lite (Exactly version 1.34 until 1.38 is available, due to [This issue](https://github.com/gsl-lite/gsl-lite/issues/270)
-  * (For testing only) Google Test
+* Boost (At least version 1.69.0)
+* GSL-lite (Exactly version 1.34 until 1.38 is available, due to [This issue](https://github.com/gsl-lite/gsl-lite/issues/270)
+* (For testing only) Google Test
 
-# Installation - CMake
+## Installation - CMake
 
 Console++ can be installed from source using CMake.  This requires Boost, GSL-Lite and any other dependencies to have been installed beforehand, using their own instructions, or for the call to `cmake --configure` to be adjusted appropriately (e.g. `-DBOOST_ROOT=...` or `-Dgsl-lite_DIR=...`).  If you do not wish to install into a system directory, and thus avoid the use of sudo, you can also pass `-DCMAKE_INSTALL_PREFIX=...` into the `cmake --configure` call.
 
@@ -27,16 +27,16 @@ Console++ can be installed from source using CMake.  This requires Boost, GSL-Li
     cmake --build .
     sudo cmake --install .
 
-# Installation - Conan
+## Installation - Conan
 
 You can also use [The Conan Package Manager](https://conan.io/) to install Telnet++ and its dependencies.
 
-# Features / Roadmap / Progress
+## Features / Roadmap / Progress
 
 1. [x] Basic console handling
-  * [x] Reading/writing from/to the console in character mode
-  * [x] Queries and callbacks for console size
+    * [x] Reading/writing from/to the console in character mode
+    * [x] Queries and callbacks for console size
 
-# Status
+## Status
 
 Console++ is automatically testing with GNU g++ 7.5.
