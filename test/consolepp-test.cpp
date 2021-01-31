@@ -6,10 +6,11 @@ TEST(console, test)
     using namespace consolepp::literals;
 
     boost::asio::io_context ctx;
-    consolepp::console csl(ctx);
 
     try
     {
+        consolepp::console csl(ctx);
+        
         auto const console_size = csl.size();
         std::cout << "console size is " 
                   << console_size.width
