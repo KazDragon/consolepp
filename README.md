@@ -29,7 +29,7 @@ Console++ can be installed from source using CMake.  This requires Boost, GSL-Li
 
 ## Installation - Conan
 
-You can also use [The Conan Package Manager](https://conan.io/) to install Telnet++ and its dependencies.
+You can also use [The Conan Package Manager](https://conan.io/) to install Console++ and its dependencies.
 
 ## Features / Roadmap / Progress
 
