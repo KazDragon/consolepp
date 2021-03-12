@@ -109,6 +109,7 @@ if (CONSOLEPP_COVERAGE)
 endif()
 
 add_library(consolepp)
+add_library(KazDragon::consolepp ALIAS consolepp)
 
 target_sources(consolepp
     PRIVATE
@@ -127,17 +128,31 @@ target_link_libraries(consolepp
         ${CONSOLEPP_PRIVATE_LIBRARIES}
 )
 
+target_include_directories(consolepp
+    PUBLIC
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include/consolepp-${CONSOLEPP_VERSION}>
+)
+
 set_target_properties(consolepp
     PROPERTIES
         CXX_VISIBILITY_PRESET hidden
         VERSION ${CONSOLEPP_VERSION}
         SOVERSION ${CONSOLEPP_VERSION}
+        DEBUG_POSTFIX "d"
 )
 
-target_include_directories(consolepp
-    PUBLIC
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include/consolepp-${CONSOLEPP_VERSION}>
+target_compile_options(consolepp
+    PRIVATE
+        # Do not generate warning C4251 (member needs dll linkage) on MSVC
+        $<$<CXX_COMPILER_ID:MSVC>:/wd4251>
+        # Do not generate warning C4275 (type needs dll linkage) on MSVC
+        $<$<CXX_COMPILER_ID:MSVC>:/wd4275>
+        # Any warning on MSVC is an error
+        $<$<CXX_COMPILER_ID:MSVC>:/WX>
+
+        # Add warnings on g++ and Clang
+        $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wpedantic -Wsign-conversion -Werror>
 )
 
 generate_export_header(consolepp
@@ -149,39 +164,15 @@ configure_file(
     ${PROJECT_SOURCE_DIR}/include/consolepp/version.hpp
     @ONLY)
 
-install(
-    TARGETS
-        consolepp
-    EXPORT
-        consolepp-config
-    ARCHIVE DESTINATION
-        lib/consolepp-${CONSOLEPP_VERSION}
-    LIBRARY DESTINATION
-        lib/consolepp-${CONSOLEPP_VERSION}
-)
-
-install(
-    DIRECTORY
-        include/
-    DESTINATION
-        include/consolepp-${CONSOLEPP_VERSION}
-)
-
-export(
-    EXPORT
-        consolepp-config
-    FILE
-        "${CMAKE_CURRENT_BINARY_DIR}/consolepp-config.cmake"
-)
-
-install(
-    EXPORT
-        consolepp-config
-    DESTINATION
-        lib/consolepp-${CONSOLEPP_VERSION}
-)
-
+include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
+
+configure_package_config_file(
+    ${PROJECT_SOURCE_DIR}/cmake/consolepp-config.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/consolepp-config.cmake
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/consolepp
+)
+
 write_basic_package_version_file(
     "${CMAKE_CURRENT_BINARY_DIR}/consolepp-config-version.cmake"
     VERSION
@@ -189,11 +180,49 @@ write_basic_package_version_file(
     COMPATIBILITY AnyNewerVersion
 )
 
+export(
+    TARGETS
+        consolepp
+    NAMESPACE
+        KazDragon::
+    FILE ${PROJECT_BINARY_DIR}/consolepp-targets.cmake
+)
+
+install(
+    TARGETS
+        consolepp
+    EXPORT
+        consolepp-targets
+    ARCHIVE DESTINATION
+        ${CMAKE_INSTALL_LIBDIR}/consolepp-${CONSOLEPP_VERSION}
+    LIBRARY DESTINATION
+        ${CMAKE_INSTALL_LIBDIR}/consolepp-${CONSOLEPP_VERSION}
+    RUNTIME DESTINATION
+        ${CMAKE_INSTALL_BINDIR}/consolepp-${CONSOLEPP_VERSION}
+)
+
+install(
+    EXPORT
+        consolepp-targets
+    NAMESPACE 
+        KazDragon::
+    DESTINATION
+        ${CMAKE_INSTALL_DATADIR}/consolepp-${CONSOLEPP_VERSION}
+)
+
+install(
+    DIRECTORY
+        include/
+    DESTINATION
+        ${CMAKE_INSTALL_INCLUDEDIR}/consolepp-${CONSOLEPP_VERSION}
+)
+
 install(
     FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/consolepp-config.cmake"
         "${CMAKE_CURRENT_BINARY_DIR}/consolepp-config-version.cmake"
     DESTINATION
-        lib/consolepp-${CONSOLEPP_VERSION}
+        ${CMAKE_INSTALL_DATADIR}/consolepp-${CONSOLEPP_VERSION}
 )
 
 if (CONSOLEPP_WITH_TESTS)
