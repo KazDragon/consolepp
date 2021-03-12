@@ -17,9 +17,9 @@ termios set_console_mode(int descriptor)
     if (::tcgetattr(descriptor, &old_attributes) == 0)
     {
         auto const new_attributes = [&]{
-            auto new_attributes = old_attributes;
-            new_attributes.c_lflag &= ~(ICANON | ECHO);
-            return new_attributes;
+            auto new_attrs = old_attributes;
+            new_attrs.c_lflag &= tcflag_t(~(ICANON | ECHO));
+            return new_attrs;
         }();
 
         if (::tcsetattr(descriptor, TCSANOW, &new_attributes) != 0)
@@ -86,9 +86,8 @@ private:
     void await_console_size_change()
     {
         signals_.async_wait(
-            [this](boost::system::error_code const &ec, int signal_number)
+            [this](boost::system::error_code const &/*ec*/, int /*signal_number*/)
             {
-                assert(signal_number == SIGWINCH);
                 self_.on_size_changed();
                 await_console_size_change();
             });
