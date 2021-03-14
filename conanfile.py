@@ -40,4 +40,7 @@ class ConanConsolepp(ConanFile):
         self.copy("*.a", dst="lib", keep_path=False)
 
     def package_info(self):
-        self.cpp_info.libs = ["consolepp"]
+        if self.settings.build_type == "Debug":
+            self.cpp_info.libs = ["consoleppd"]
+        else:
+            self.cpp_info.libs = ["consolepp"]
