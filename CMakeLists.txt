@@ -78,8 +78,8 @@ else()
     # Console++ requires at least Boost 1.69.
     find_package(Boost 1.69.0 REQUIRED COMPONENTS container)
 
-    # Console++ requires exactly version 0.34 of gsl-lite
-    find_package(gsl-lite 0.34.0 EXACT REQUIRED)
+    # Console++ requires at least version 0.38 of gsl-lite
+    find_package(gsl-lite 0.38.0 REQUIRED)
 
     set(CONSOLEPP_PUBLIC_LIBRARIES
         Boost::boost
