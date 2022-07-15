@@ -16,13 +16,12 @@ termios set_console_mode(int descriptor)
 
     if (::tcgetattr(descriptor, &old_attributes) == 0)
     {
-        auto const new_attributes = [&]{
-            auto new_attrs = old_attributes;
-            new_attrs.c_lflag &= tcflag_t(~(ICANON | ECHO));
-            return new_attrs;
-        }();
-
-        if (::tcsetattr(descriptor, TCSANOW, &new_attributes) != 0)
+        if (auto const new_attributes = [&]{
+                auto new_attrs = old_attributes;
+                new_attrs.c_lflag &= tcflag_t(~(ICANON | ECHO));
+                return new_attrs;
+            }();
+            ::tcsetattr(descriptor, TCSANOW, &new_attributes) != 0)
         {
             throw invalid_console();
         }
@@ -42,15 +41,15 @@ void restore_console_mode(int descriptor, termios const &attributes)
 
 extent get_console_size(int descriptor)
 {
-    auto const window_size = [descriptor]
-    {
-        winsize ws;
-        if (ioctl(descriptor, TIOCGWINSZ, &ws) < 0)
+    auto const window_size = [descriptor] {
+        if (winsize ws; ioctl(descriptor, TIOCGWINSZ, &ws) < 0)
         {
             throw invalid_console();
         }
-
-        return ws;
+        else
+        {
+            return ws;
+        }
     }();
 
     return {window_size.ws_col, window_size.ws_row};
