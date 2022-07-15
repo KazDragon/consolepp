@@ -100,7 +100,7 @@ $(function() {
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    byte_storage result;</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    result.reserve(length);</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> ch : gsl::span&lt;char const&gt;{text, length})</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> ch : gsl::span{text, length})</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    {</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        result.push_back(<span class="keyword">static_cast&lt;</span>consolepp::byte<span class="keyword">&gt;</span>(ch));</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    }</div>
@@ -114,7 +114,7 @@ $(function() {
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu May 5 2022 06:57:29 for Console++ by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jul 15 2022 08:47:09 for Console++ by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.17
 </small></address>
