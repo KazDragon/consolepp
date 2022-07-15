@@ -8,7 +8,6 @@
 
 namespace consolepp {
 
-
 //* =========================================================================
 /// An exception that is thrown whenever the console cannot perform a
 /// function due to a failure in an OS primitive.

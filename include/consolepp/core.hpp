@@ -27,7 +27,7 @@ inline byte_storage operator ""_cb(char const *text, size_t length)
     byte_storage result;
     result.reserve(length);
 
-    for (auto ch : gsl::span<char const>{text, length})
+    for (auto ch : gsl::span{text, length})
     {
         result.push_back(static_cast<consolepp::byte>(ch));
     }

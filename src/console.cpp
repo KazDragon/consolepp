@@ -41,8 +41,7 @@ void restore_console_mode(int descriptor, termios const &attributes)
 
 extent get_console_size(int descriptor)
 {
-    auto const window_size = [descriptor]
-    {
+    auto const window_size = [descriptor] {
         if (winsize ws; ioctl(descriptor, TIOCGWINSZ, &ws) < 0)
         {
             throw invalid_console();
