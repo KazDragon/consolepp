@@ -142,6 +142,11 @@ set_target_properties(consolepp
         DEBUG_POSTFIX "d"
 )
 
+target_compile_features(consolepp
+    PUBLIC
+        cxx_std_17
+)
+
 target_compile_options(consolepp
     PRIVATE
         # Do not generate warning C4251 (member needs dll linkage) on MSVC
