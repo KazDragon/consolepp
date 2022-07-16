@@ -5,7 +5,6 @@
 [![GitHub Releases](https://img.shields.io/github/release/KazDragon/consolepp.svg)](https://github.com/KazDragon/consolepp/releases) 
 [![Linux Build status](https://github.com/KazDragon/consolepp/workflows/build/badge.svg)](https://github.com/KazDragon/consolepp/actions?query=event%3Apush) 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/63ec54845f2c41f1899706c61f1c316b)](https://www.codacy.com/app/KazDragon/consolepp?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=KazDragon/consolepp&amp;utm_campaign=Badge_Grade)
-[![Download](https://api.bintray.com/packages/kazdragon/conan-public/consolepp%3Akazdragon/images/download.svg)](https://bintray.com/kazdragon/conan-public/consolepp%3Akazdragon/_latestVersion)
 
 Console++ is a small framework for interacting with the console on a character-at-a-time basis.  Used together with Terminal++ and Munin, this
 library can form the foundation of any graphical terminal application.
