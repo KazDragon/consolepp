@@ -10,6 +10,9 @@ namespace {
 
 constexpr int default_read_buffer_size = 1024;
 
+// ==========================================================================
+// SET_CONSOLE_MODE
+// ==========================================================================
 termios set_console_mode(int descriptor)
 {
     termios old_attributes;
@@ -34,11 +37,17 @@ termios set_console_mode(int descriptor)
     return old_attributes;
 }
 
+// ==========================================================================
+// RESTORE_CONSOLE_MODE
+// ==========================================================================
 void restore_console_mode(int descriptor, termios const &attributes)
 {
     ::tcsetattr(descriptor, TCSANOW, &attributes);
 }
 
+// ==========================================================================
+// GET_CONSOLE_SIZE
+// ==========================================================================
 extent get_console_size(int descriptor)
 {
     auto const window_size = [descriptor] {
@@ -57,8 +66,14 @@ extent get_console_size(int descriptor)
 
 }
 
+// ==========================================================================
+// CONSOLE::IMPLEMENTATION STRUCTURE
+// ==========================================================================
 struct console::impl
 {
+    // ======================================================================
+    // CONSTRUCTOR
+    // ======================================================================
     impl(console &self, boost::asio::io_context &ctx)
       : self_(self),
         io_context_{ctx},
@@ -69,6 +84,9 @@ struct console::impl
         await_console_size_change();
     }
 
+    // ======================================================================
+    // DESTRUCTOR
+    // ======================================================================
     ~impl()
     {
         signals_.cancel();
@@ -82,6 +100,9 @@ struct console::impl
     int console_descriptor_;
 
 private:
+    // ======================================================================
+    // AWAIT_CONSOLE_SIZE_CHANGE
+    // ======================================================================
     void await_console_size_change()
     {
         signals_.async_wait(
@@ -93,6 +114,9 @@ private:
     }
 };
 
+// ==========================================================================
+// CONSTRUCTOR
+// ==========================================================================
 console::console(boost::asio::io_context &ctx)
   : pimpl_(boost::make_unique<impl>(*this, ctx)),
     stream_(ctx, pimpl_->console_descriptor_),
@@ -101,13 +125,38 @@ console::console(boost::asio::io_context &ctx)
 {
 }
 
+// ==========================================================================
+// DESTRUCTOR
+// ==========================================================================
 console::~console() = default;
 
+// ==========================================================================
+// WRITE
+// ==========================================================================
 void console::write(bytes data)
 {
     stream_.write_some(boost::asio::const_buffer{data.begin(), data.size()});
 }
 
+// ==========================================================================
+// IS_ALIVE
+// ==========================================================================
+bool console::is_alive() const
+{
+    return stream_.is_open();
+}
+
+// ==========================================================================
+// CLOSE
+// ==========================================================================
+void console::close()
+{
+    stream_.close();
+}
+
+// ==========================================================================
+// SIZE
+// ==========================================================================
 extent console::size() const
 {
     return get_console_size(STDIN_FILENO);

@@ -14,7 +14,9 @@ int main()
         consolepp::console csl(ctx);
         
         auto const console_size = csl.size();
-        std::cout << "console size is " 
+        std::cout << "console is " 
+                  << (csl.is_alive() ? "open " : "closed ")
+                  << "with size "
                   << console_size.width
                   << "x"
                   << console_size.height
