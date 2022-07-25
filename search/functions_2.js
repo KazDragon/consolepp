@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['size_16',['size',['../classconsolepp_1_1console.html#adf26271de24381c27ccce9469c5799d8',1,'consolepp::console']]]
+  ['is_5falive_19',['is_alive',['../classconsolepp_1_1console.html#a0e32b2b9d6dbf7c944aca80e49748561',1,'consolepp::console']]]
 ];

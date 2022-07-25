@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['_7econsole_18',['~console',['../classconsolepp_1_1console.html#a78ffb2983109eada50d37a8e4730981e',1,'consolepp::console']]]
+  ['write_21',['write',['../classconsolepp_1_1console.html#a92eac4b50ae490b0683e23d49ffead75',1,'consolepp::console']]]
 ];
