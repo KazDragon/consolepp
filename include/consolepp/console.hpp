@@ -73,6 +73,10 @@ struct CONSOLEPP_EXPORT extent final
 ///         size = csl.size();
 ///     });
 /// \endcode
+///
+/// \par Channel
+/// The console aligns with the channel concept used across other related
+/// libraries, including Server++, Terminal++ and Telnet++.
 //* =========================================================================
 class CONSOLEPP_EXPORT console final
 {
@@ -111,6 +115,16 @@ public:
                     bytes{read_buffer_.data(), bytes_transferred});
             });
     }
+
+    //* =====================================================================
+    /// \brief Returns whether the console is alive or not.
+    //* =====================================================================
+    bool is_alive() const;
+
+    //* =====================================================================
+    /// \brief Closes the console.
+    //* =====================================================================
+    void close();
 
     //* =====================================================================
     /// Returns the size of the console.
