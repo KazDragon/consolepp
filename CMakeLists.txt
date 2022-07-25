@@ -1,6 +1,6 @@
 if (POLICY CMP0048)
     cmake_policy(SET CMP0048 NEW)
-    project(CONSOLEPP VERSION 0.1.0)
+    project(CONSOLEPP VERSION 0.1.1)
 else()
     project(CONSOLEPP)
 endif()
