@@ -57,7 +57,7 @@ if (${CONSOLEPP_WITH_TESTS})
 endif()
 
 # Console++ requires at least Boost 1.69.
-find_package(Boost 1.69.0 REQUIRED COMPONENTS container)
+find_package(Boost 1.69.0 REQUIRED)
 
 # Console++ requires at least version 0.38 of gsl-lite
 find_package(gsl-lite 0.38.0 REQUIRED)
