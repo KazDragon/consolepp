@@ -46,52 +46,21 @@ if (CONSOLEPP_DOC_ONLY)
     return()
 endif()
 
-if (EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-    message("Using Conan due to conanbuildinfo.cmake")
-    set(CONSOLEPP_USE_CONAN ON)
-    include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-    conan_basic_setup(TARGETS NO_OUTPUT_DIRS)
-endif()
-
 set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # The required C++ Standard for Console++ is C++14.
 set(CMAKE_CXX_STANDARD 14)
 
-if (CONSOLEPP_USE_CONAN)
-    set(CONSOLEPP_PUBLIC_LIBRARIES
-        CONAN_PKG::boost
-        CONAN_PKG::gsl-lite
-    )
-
-    set(CONSOLEPP_PRIVATE_LIBRARIES)
-    set(CONSOLEPP_TESTER_LIBRARIES
-        consolepp
-        CONAN_PKG::gtest
-    )
-else()
-    # If we are building with tests, then we require the GTest library
-    if (${CONSOLEPP_WITH_TESTS})
-        find_package(GTest REQUIRED)
-    endif()
-
-    # Console++ requires at least Boost 1.69.
-    find_package(Boost 1.69.0 REQUIRED COMPONENTS container)
-
-    # Console++ requires at least version 0.38 of gsl-lite
-    find_package(gsl-lite 0.38.0 REQUIRED)
-
-    set(CONSOLEPP_PUBLIC_LIBRARIES
-        Boost::boost
-        gsl::gsl-lite
-    )
-
-    set(CONSOLEPP_PRIVATE_LIBRARIES)
-    set(CONSOLEPP_TESTER_LIBRARIES
-        consolepp
-        GTest::GTest
-        GTest::Main)
+# If we are building with tests, then we require the GTest library
+if (${CONSOLEPP_WITH_TESTS})
+    find_package(GTest REQUIRED)
 endif()
+
+# Console++ requires at least Boost 1.69.
+find_package(Boost 1.69.0 REQUIRED COMPONENTS container)
+
+# Console++ requires at least version 0.38 of gsl-lite
+find_package(gsl-lite 0.38.0 REQUIRED)
 
 # When building shared objects, etc., we only want to export certain symbols.
 # Therefore, we need to generate a header suitable for declaring which
@@ -123,9 +92,8 @@ target_sources(consolepp
 
 target_link_libraries(consolepp
     PUBLIC
-        ${CONSOLEPP_PUBLIC_LIBRARIES}
-    PRIVATE
-        ${CONSOLEPP_PRIVATE_LIBRARIES}
+        Boost::boost
+        gsl::gsl-lite
 )
 
 target_include_directories(consolepp
@@ -242,7 +210,9 @@ if (CONSOLEPP_WITH_TESTS)
 
     target_link_libraries(consolepp_tester
         PRIVATE
-            ${CONSOLEPP_TESTER_LIBRARIES}
+            consolepp
+            GTest::GTest
+            GTest::Main
     )
 
     add_test(consolepp_test consolepp_tester)
