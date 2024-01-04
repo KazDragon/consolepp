@@ -5,3 +5,5 @@ version.hpp
 /.vscode
 /out/build
 /CMakeSettings.json
+.cache
+compile_commands.json

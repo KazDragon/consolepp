@@ -15,26 +15,28 @@ constexpr int default_read_buffer_size = 1024;
 // ==========================================================================
 termios set_console_mode(int descriptor)
 {
-    termios old_attributes;
+  termios old_attributes;
 
-    if (::tcgetattr(descriptor, &old_attributes) == 0)
-    {
-        if (auto const new_attributes = [&]{
-                auto new_attrs = old_attributes;
-                new_attrs.c_lflag &= tcflag_t(~(ICANON | ECHO));
-                return new_attrs;
-            }();
-            ::tcsetattr(descriptor, TCSANOW, &new_attributes) != 0)
+  if (::tcgetattr(descriptor, &old_attributes) == 0)
+  {
+    if (auto const new_attributes =
+            [&]
         {
-            throw invalid_console();
-        }
-    }
-    else
+          auto new_attrs = old_attributes;
+          new_attrs.c_lflag &= static_cast<tcflag_t>(~(ICANON | ECHO));
+          return new_attrs;
+        }();
+        ::tcsetattr(descriptor, TCSANOW, &new_attributes) != 0)
     {
-        throw invalid_console();
+      throw invalid_console();
     }
+  }
+  else
+  {
+    throw invalid_console();
+  }
 
-    return old_attributes;
+  return old_attributes;
 }
 
 // ==========================================================================
@@ -42,7 +44,7 @@ termios set_console_mode(int descriptor)
 // ==========================================================================
 void restore_console_mode(int descriptor, termios const &attributes)
 {
-    ::tcsetattr(descriptor, TCSANOW, &attributes);
+  ::tcsetattr(descriptor, TCSANOW, &attributes);
 }
 
 // ==========================================================================
@@ -50,78 +52,89 @@ void restore_console_mode(int descriptor, termios const &attributes)
 // ==========================================================================
 extent get_console_size(int descriptor)
 {
-    auto const window_size = [descriptor] {
-        if (winsize ws; ioctl(descriptor, TIOCGWINSZ, &ws) < 0)
-        {
-            throw invalid_console();
-        }
-        else
-        {
-            return ws;
-        }
-    }();
+  auto const window_size = [descriptor]
+  {
+    if (winsize ws; ioctl(descriptor, TIOCGWINSZ, &ws) < 0)
+    {
+      throw invalid_console();
+    }
+    else
+    {
+      return ws;
+    }
+  }();
 
-    return {window_size.ws_col, window_size.ws_row};
+  return {window_size.ws_col, window_size.ws_row};
 }
 
-}
+}  // namespace
 
 // ==========================================================================
 // CONSOLE::IMPLEMENTATION STRUCTURE
 // ==========================================================================
 struct console::impl
 {
-    // ======================================================================
-    // CONSTRUCTOR
-    // ======================================================================
-    impl(console &self, boost::asio::io_context &ctx)
-      : self_(self),
-        io_context_{ctx},
-        signals_{io_context_, SIGWINCH},
-        old_attributes_{set_console_mode(STDIN_FILENO)},
-        console_descriptor_{::dup(STDIN_FILENO)}
-    {
-        await_console_size_change();
-    }
+  // ======================================================================
+  // CONSTRUCTOR
+  // ======================================================================
+  impl(console &self, boost::asio::io_context &ctx)
+    : self_(self),
+      io_context_{ctx},
+      signals_{io_context_, SIGWINCH},
+      old_attributes_{set_console_mode(STDIN_FILENO)},
+      console_descriptor_{::dup(STDIN_FILENO)}
+  {
+    await_console_size_change();
+  }
 
-    // ======================================================================
-    // DESTRUCTOR
-    // ======================================================================
-    ~impl()
-    {
-        signals_.cancel();
-        restore_console_mode(STDIN_FILENO, old_attributes_);
-    }
+  // ======================================================================
+  // COPY CONSTRUCTOR
+  // ======================================================================
+  impl(impl const &) = delete;
 
-    console &self_;
-    boost::asio::io_context &io_context_;
-    boost::asio::signal_set signals_;
-    termios old_attributes_;
-    int console_descriptor_;
+  // ======================================================================
+  // DESTRUCTOR
+  // ======================================================================
+  ~impl()
+  {
+    signals_.cancel();
+    restore_console_mode(STDIN_FILENO, old_attributes_);
+  }
 
-private:
-    // ======================================================================
-    // AWAIT_CONSOLE_SIZE_CHANGE
-    // ======================================================================
-    void await_console_size_change()
-    {
-        signals_.async_wait(
-            [this](boost::system::error_code const &/*ec*/, int /*signal_number*/)
-            {
-                self_.on_size_changed();
-                await_console_size_change();
-            });
-    }
+  // ======================================================================
+  // COPY ASSIGNMENT
+  // ======================================================================
+  impl &operator=(impl const &) = delete;
+
+  console &self_;                        // NOLINT
+  boost::asio::io_context &io_context_;  // NOLINT
+  boost::asio::signal_set signals_;      // NOLINT
+  termios old_attributes_;               // NOLINT
+  int console_descriptor_;               // NOLINT
+
+ private:
+  // ======================================================================
+  // AWAIT_CONSOLE_SIZE_CHANGE
+  // ======================================================================
+  void await_console_size_change()
+  {
+    signals_.async_wait(
+        [this](boost::system::error_code const & /*ec*/, int /*signal_number*/)
+        {
+          self_.on_size_changed();
+          await_console_size_change();
+        });
+  }
 };
 
 // ==========================================================================
 // CONSTRUCTOR
 // ==========================================================================
-console::console(boost::asio::io_context &ctx)
-  : pimpl_(boost::make_unique<impl>(*this, ctx)),
-    stream_(ctx, pimpl_->console_descriptor_),
+console::console(boost::asio::io_context &io_context)
+  : pimpl_(boost::make_unique<impl>(*this, io_context)),
+    stream_(io_context, pimpl_->console_descriptor_),
     read_buffer_(default_read_buffer_size, '\0')
-    
+
 {
 }
 
@@ -135,7 +148,7 @@ console::~console() = default;
 // ==========================================================================
 void console::write(bytes data)
 {
-    stream_.write_some(boost::asio::const_buffer{data.begin(), data.size()});
+  stream_.write_some(boost::asio::const_buffer{data.begin(), data.size()});
 }
 
 // ==========================================================================
@@ -143,7 +156,7 @@ void console::write(bytes data)
 // ==========================================================================
 bool console::is_alive() const
 {
-    return stream_.is_open();
+  return stream_.is_open();
 }
 
 // ==========================================================================
@@ -151,7 +164,7 @@ bool console::is_alive() const
 // ==========================================================================
 void console::close()
 {
-    stream_.close();
+  stream_.close();
 }
 
 // ==========================================================================
@@ -159,7 +172,7 @@ void console::close()
 // ==========================================================================
 extent console::size() const
 {
-    return get_console_size(STDIN_FILENO);
+  return get_console_size(STDIN_FILENO);
 }
 
-}
+}  // namespace consolepp
