@@ -26,10 +26,6 @@ Console++ can be installed from source using CMake.  This requires Boost, GSL-Li
     cmake --build .
     sudo cmake --install .
 
-## Installation - Conan
-
-You can also use [The Conan Package Manager](https://conan.io/) to install Console++ and its dependencies.
-
 ## Features / Roadmap / Progress
 
 1. [x] Basic console handling
