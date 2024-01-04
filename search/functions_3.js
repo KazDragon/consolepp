@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['size_20',['size',['../classconsolepp_1_1console.html#adf26271de24381c27ccce9469c5799d8',1,'consolepp::console']]]
+  ['operator_3d_21',['operator=',['../classconsolepp_1_1console.html#acf0558003e15158ac4c3b4068a691635',1,'consolepp::console']]]
 ];
