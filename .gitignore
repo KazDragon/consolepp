@@ -7,3 +7,4 @@ version.hpp
 /CMakeSettings.json
 .cache
 compile_commands.json
+/ext
