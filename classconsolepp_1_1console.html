@@ -134,7 +134,7 @@ boost::signals2::signal&lt; void()&gt;&#160;</td><td class="memItemRight" valign
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A class that represents a console.</p>
 <dl class="section user"><dt>Usage</dt><dd>Construct a console by passing an io_context object. All reading and writing to the console will be performed in this context, along with any signal handling required for e.g. console size change notifications, and will thus occur only on threads where the io_context object is running. <div class="fragment"><div class="line"><a class="code" href="classconsolepp_1_1console.html">consolepp::console</a> csl{my_io_context};</div>
-<div class="ttc" id="aclassconsolepp_1_1console_html"><div class="ttname"><a href="classconsolepp_1_1console.html">consolepp::console</a></div><div class="ttdef"><b>Definition:</b> console.hpp:84</div></div>
+<div class="ttc" id="aclassconsolepp_1_1console_html"><div class="ttname"><a href="classconsolepp_1_1console.html">consolepp::console</a></div><div class="ttdef"><b>Definition:</b> console.hpp:86</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section user"><dt></dt><dd>You can write to the console by passing in any sequence of bytes. A UDL is supplied for easy conversion of string literals. <div class="fragment"><div class="line"><span class="keyword">using namespace </span>consolepp::literals;</div>
 <div class="line">std::vector&lt;consolepp::byte&gt; hello = { 74, 101, 108, 108, 111, 44, 32 };</div>
@@ -164,7 +164,7 @@ boost::signals2::signal&lt; void()&gt;&#160;</td><td class="memItemRight" valign
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Mar 24 2024 13:45:21 for Console++ by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
+Generated on Sun Mar 24 2024 14:11:53 for Console++ by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
 </small></address>
 </body>
 </html>
