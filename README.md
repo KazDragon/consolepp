@@ -11,7 +11,7 @@ library can form the foundation of any graphical terminal application.
 
 ## Requirements
 
-Console++ requires a C++17 compiler and the following libraries:
+Console++ requires a C++20 compiler and the following libraries:
 * Boost (At least version 1.69.0)
 * GSL-lite (At least version 1.38)
 * (For testing only) Google Test

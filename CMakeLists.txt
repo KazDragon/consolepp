@@ -43,9 +43,6 @@ endif()
 
 set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# The required C++ Standard for Console++ is C++14.
-set(CMAKE_CXX_STANDARD 14)
-
 # If we are building with tests, then we require the GTest library
 if (${CONSOLEPP_WITH_TESTS})
     find_package(GTest REQUIRED)
@@ -107,7 +104,7 @@ set_target_properties(consolepp
 
 target_compile_features(consolepp
     PUBLIC
-        cxx_std_17
+        cxx_std_20
 )
 
 target_compile_options(consolepp
