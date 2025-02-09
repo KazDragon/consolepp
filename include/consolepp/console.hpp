@@ -5,6 +5,7 @@
 #include <boost/asio.hpp>
 #include <boost/signals2.hpp>
 
+#include <concepts>  // IWYU pragma: keep
 #include <memory>
 #include <utility>
 
@@ -115,6 +116,7 @@ public:
     /// passed continuation.
     //* =====================================================================
     template <class ReadContinuation>
+        requires(std::invocable<ReadContinuation, bytes>)
     void async_read(ReadContinuation &&read_continuation)
     {
         stream_.async_read_some(

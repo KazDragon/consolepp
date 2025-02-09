@@ -51,9 +51,6 @@ endif()
 # Console++ requires at least Boost 1.69.
 find_package(Boost 1.69.0 REQUIRED)
 
-# Console++ requires at least version 0.38 of gsl-lite
-find_package(gsl-lite 0.38.0 REQUIRED)
-
 # When building shared objects, etc., we only want to export certain symbols.
 # Therefore, we need to generate a header suitable for declaring which
 # symbols should be included.
@@ -85,7 +82,6 @@ target_sources(consolepp
 target_link_libraries(consolepp
     PUBLIC
         Boost::boost
-        gsl::gsl-lite
 )
 
 target_include_directories(consolepp

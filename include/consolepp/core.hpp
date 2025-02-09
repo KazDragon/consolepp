@@ -1,9 +1,9 @@
 #include "consolepp/detail/export.hpp"  // IWYU pragma: export
 #include "consolepp/version.hpp"        // IWYU pragma: export
 
-#include <gsl/gsl-lite.hpp>
-
-#include <cstring>
+#include <span>
+#include <string>
+#include <cstdint>
 
 namespace consolepp {
 
@@ -15,7 +15,7 @@ using byte = std::uint8_t;
 // it is found.  For that reason, these spans should never be stored directly.
 // If storage is necessary, it must be converted into a longer-living data
 // structure.
-using bytes = gsl::span<byte const>;
+using bytes = std::span<byte const>;
 
 // Where necessary, bytes are stored in this type, which has the small string
 // optimization, meaning that most trivial cases will not cause an allocation.
@@ -29,7 +29,7 @@ inline byte_storage operator""_cb(char const *text, size_t length)
     byte_storage result;
     result.reserve(length);
 
-    for (auto ch : gsl::span{text, length})
+    for (auto ch : std::span{text, length})
     {
         result.push_back(static_cast<consolepp::byte>(ch));
     }
