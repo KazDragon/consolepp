@@ -84,7 +84,7 @@ struct CONSOLEPP_EXPORT extent final
 //* =========================================================================
 class CONSOLEPP_EXPORT console final
 {
-   public:
+public:
     //* =====================================================================
     /// Constructor
     //* =====================================================================
@@ -149,7 +149,7 @@ class CONSOLEPP_EXPORT console final
     //* =====================================================================
     boost::signals2::signal<void()> on_size_changed;  // NOLINT
 
-   private:
+private:
     struct impl;
     std::unique_ptr<impl> pimpl_;
 

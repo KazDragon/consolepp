@@ -112,7 +112,7 @@ struct console::impl
     termios old_attributes_;               // NOLINT
     int console_descriptor_;               // NOLINT
 
-   private:
+private:
     // ======================================================================
     // AWAIT_CONSOLE_SIZE_CHANGE
     // ======================================================================
