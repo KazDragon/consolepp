@@ -43,9 +43,6 @@ endif()
 
 set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# The required C++ Standard for Console++ is C++14.
-set(CMAKE_CXX_STANDARD 14)
-
 # If we are building with tests, then we require the GTest library
 if (${CONSOLEPP_WITH_TESTS})
     find_package(GTest REQUIRED)
@@ -53,9 +50,6 @@ endif()
 
 # Console++ requires at least Boost 1.69.
 find_package(Boost 1.69.0 REQUIRED)
-
-# Console++ requires at least version 0.38 of gsl-lite
-find_package(gsl-lite 0.38.0 REQUIRED)
 
 # When building shared objects, etc., we only want to export certain symbols.
 # Therefore, we need to generate a header suitable for declaring which
@@ -88,7 +82,6 @@ target_sources(consolepp
 target_link_libraries(consolepp
     PUBLIC
         Boost::boost
-        gsl::gsl-lite
 )
 
 target_include_directories(consolepp
@@ -107,7 +100,7 @@ set_target_properties(consolepp
 
 target_compile_features(consolepp
     PUBLIC
-        cxx_std_17
+        cxx_std_20
 )
 
 target_compile_options(consolepp

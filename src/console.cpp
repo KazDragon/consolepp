@@ -112,7 +112,7 @@ struct console::impl
     termios old_attributes_;               // NOLINT
     int console_descriptor_;               // NOLINT
 
-   private:
+private:
     // ======================================================================
     // AWAIT_CONSOLE_SIZE_CHANGE
     // ======================================================================
@@ -148,7 +148,11 @@ console::~console() = default;
 // ==========================================================================
 void console::write(bytes data)
 {
-    stream_.write_some(boost::asio::const_buffer{data.begin(), data.size()});
+    if (!data.empty())
+    {
+        stream_.write_some(
+            boost::asio::const_buffer{&*data.begin(), data.size()});
+    }
 }
 
 // ==========================================================================

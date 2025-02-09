@@ -5,6 +5,7 @@
 #include <boost/asio.hpp>
 #include <boost/signals2.hpp>
 
+#include <concepts>  // IWYU pragma: keep
 #include <memory>
 #include <utility>
 
@@ -84,7 +85,7 @@ struct CONSOLEPP_EXPORT extent final
 //* =========================================================================
 class CONSOLEPP_EXPORT console final
 {
-   public:
+public:
     //* =====================================================================
     /// Constructor
     //* =====================================================================
@@ -115,6 +116,7 @@ class CONSOLEPP_EXPORT console final
     /// passed continuation.
     //* =====================================================================
     template <class ReadContinuation>
+        requires(std::invocable<ReadContinuation, bytes>)
     void async_read(ReadContinuation &&read_continuation)
     {
         stream_.async_read_some(
@@ -149,7 +151,7 @@ class CONSOLEPP_EXPORT console final
     //* =====================================================================
     boost::signals2::signal<void()> on_size_changed;  // NOLINT
 
-   private:
+private:
     struct impl;
     std::unique_ptr<impl> pimpl_;
 

@@ -11,14 +11,13 @@ library can form the foundation of any graphical terminal application.
 
 ## Requirements
 
-Console++ requires a C++17 compiler and the following libraries:
+Console++ requires a C++20 compiler and the following libraries:
 * Boost (At least version 1.69.0)
-* GSL-lite (At least version 1.38)
 * (For testing only) Google Test
 
 ## Installation - CMake
 
-Console++ can be installed from source using CMake.  This requires Boost, GSL-Lite and any other dependencies to have been installed beforehand, using their own instructions, or for the call to `cmake --configure` to be adjusted appropriately (e.g. `-DBOOST_ROOT=...` or `-Dgsl-lite_DIR=...`).  If you do not wish to install into a system directory, and thus avoid the use of sudo, you can also pass `-DCMAKE_INSTALL_PREFIX=...` into the `cmake --configure` call.
+Console++ can be installed from source using CMake.  This requires Boost, and any other dependencies to have been installed beforehand, using their own instructions, or for the call to `cmake --configure` to be adjusted appropriately (e.g. `-DBOOST_ROOT=...`).  If you do not wish to install into a system directory, and thus avoid the use of sudo, you can also pass `-DCMAKE_INSTALL_PREFIX=...` into the `cmake --configure` call.
 
     git clone https://github.com/KazDragon/consolepp.git && cd consolepp
     mkdir build && cd build
