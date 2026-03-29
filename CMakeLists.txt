@@ -69,12 +69,21 @@ endif()
 add_library(consolepp)
 add_library(KazDragon::consolepp ALIAS consolepp)
 
+set(CONSOLEPP_GENERATED_INCLUDE_DIR
+    "${PROJECT_BINARY_DIR}/generated/include")
+set(CONSOLEPP_GENERATED_EXPORT_HEADER
+    "${CONSOLEPP_GENERATED_INCLUDE_DIR}/consolepp/detail/export.hpp")
+set(CONSOLEPP_GENERATED_VERSION_HEADER
+    "${CONSOLEPP_GENERATED_INCLUDE_DIR}/consolepp/version.hpp")
+
+file(MAKE_DIRECTORY "${CONSOLEPP_GENERATED_INCLUDE_DIR}/consolepp/detail")
+
 target_sources(consolepp
     PRIVATE
-        include/consolepp/detail/export.hpp
+        ${CONSOLEPP_GENERATED_EXPORT_HEADER}
         include/consolepp/console.hpp
         include/consolepp/core.hpp
-        include/consolepp/version.hpp
+        ${CONSOLEPP_GENERATED_VERSION_HEADER}
 
         src/console.cpp
 )
@@ -86,6 +95,7 @@ target_link_libraries(consolepp
 
 target_include_directories(consolepp
     PUBLIC
+        $<BUILD_INTERFACE:${CONSOLEPP_GENERATED_INCLUDE_DIR}>
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include/consolepp-${CONSOLEPP_VERSION}>
 )
@@ -117,12 +127,12 @@ target_compile_options(consolepp
 )
 
 generate_export_header(consolepp
-    EXPORT_FILE_NAME "${PROJECT_SOURCE_DIR}/include/consolepp/detail/export.hpp"
+    EXPORT_FILE_NAME "${CONSOLEPP_GENERATED_EXPORT_HEADER}"
 )
 
 configure_file(
     ${PROJECT_SOURCE_DIR}/include/consolepp/version.hpp.in
-    ${PROJECT_SOURCE_DIR}/include/consolepp/version.hpp
+    ${CONSOLEPP_GENERATED_VERSION_HEADER}
     @ONLY)
 
 include(GNUInstallDirs)
@@ -176,6 +186,20 @@ install(
         include/
     DESTINATION
         ${CMAKE_INSTALL_INCLUDEDIR}/consolepp-${CONSOLEPP_VERSION}
+)
+
+install(
+    FILES
+        "${CONSOLEPP_GENERATED_EXPORT_HEADER}"
+    DESTINATION
+        ${CMAKE_INSTALL_INCLUDEDIR}/consolepp-${CONSOLEPP_VERSION}/consolepp/detail
+)
+
+install(
+    FILES
+        "${CONSOLEPP_GENERATED_VERSION_HEADER}"
+    DESTINATION
+        ${CMAKE_INSTALL_INCLUDEDIR}/consolepp-${CONSOLEPP_VERSION}/consolepp
 )
 
 install(
