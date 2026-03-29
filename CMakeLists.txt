@@ -1,11 +1,6 @@
-if (POLICY CMP0048)
-    cmake_policy(SET CMP0048 NEW)
-    project(CONSOLEPP VERSION 0.1.1)
-else()
-    project(CONSOLEPP)
-endif()
-
 cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
+cmake_policy(VERSION 3.22)
+project(CONSOLEPP VERSION 0.1.1)
 
 option(CONOSOLEPP_COVERAGE  "Build with code coverage options")
 option(CONSOLEPP_SANITIZE "Build using sanitizers" "")
@@ -45,11 +40,14 @@ set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # If we are building with tests, then we require the GTest library
 if (${CONSOLEPP_WITH_TESTS})
-    find_package(GTest REQUIRED)
+    find_package(GTest CONFIG REQUIRED)
 endif()
 
 # Console++ requires at least Boost 1.69.
 find_package(Boost 1.69.0 REQUIRED)
+
+# GTest imported targets depend on Threads::Threads in this toolchain.
+find_package(Threads REQUIRED)
 
 # When building shared objects, etc., we only want to export certain symbols.
 # Therefore, we need to generate a header suitable for declaring which
@@ -223,8 +221,8 @@ if (CONSOLEPP_WITH_TESTS)
     target_link_libraries(consolepp_tester
         PRIVATE
             consolepp
-            GTest::GTest
-            GTest::Main
+            GTest::gtest
+            GTest::gtest_main
     )
 
     add_test(consolepp_test consolepp_tester)
