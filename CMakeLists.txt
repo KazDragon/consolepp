@@ -1,11 +1,6 @@
-if (POLICY CMP0048)
-    cmake_policy(SET CMP0048 NEW)
-    project(CONSOLEPP VERSION 0.1.1)
-else()
-    project(CONSOLEPP)
-endif()
-
 cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
+cmake_policy(VERSION 3.22)
+project(CONSOLEPP VERSION 0.1.1)
 
 option(CONOSOLEPP_COVERAGE  "Build with code coverage options")
 option(CONSOLEPP_SANITIZE "Build using sanitizers" "")
@@ -45,11 +40,14 @@ set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # If we are building with tests, then we require the GTest library
 if (${CONSOLEPP_WITH_TESTS})
-    find_package(GTest REQUIRED)
+    find_package(GTest CONFIG REQUIRED)
 endif()
 
 # Console++ requires at least Boost 1.69.
 find_package(Boost 1.69.0 REQUIRED)
+
+# GTest imported targets depend on Threads::Threads in this toolchain.
+find_package(Threads REQUIRED)
 
 # When building shared objects, etc., we only want to export certain symbols.
 # Therefore, we need to generate a header suitable for declaring which
@@ -69,12 +67,21 @@ endif()
 add_library(consolepp)
 add_library(KazDragon::consolepp ALIAS consolepp)
 
+set(CONSOLEPP_GENERATED_INCLUDE_DIR
+    "${PROJECT_BINARY_DIR}/generated/include")
+set(CONSOLEPP_GENERATED_EXPORT_HEADER
+    "${CONSOLEPP_GENERATED_INCLUDE_DIR}/consolepp/detail/export.hpp")
+set(CONSOLEPP_GENERATED_VERSION_HEADER
+    "${CONSOLEPP_GENERATED_INCLUDE_DIR}/consolepp/version.hpp")
+
+file(MAKE_DIRECTORY "${CONSOLEPP_GENERATED_INCLUDE_DIR}/consolepp/detail")
+
 target_sources(consolepp
     PRIVATE
-        include/consolepp/detail/export.hpp
+        ${CONSOLEPP_GENERATED_EXPORT_HEADER}
         include/consolepp/console.hpp
         include/consolepp/core.hpp
-        include/consolepp/version.hpp
+        ${CONSOLEPP_GENERATED_VERSION_HEADER}
 
         src/console.cpp
 )
@@ -86,6 +93,7 @@ target_link_libraries(consolepp
 
 target_include_directories(consolepp
     PUBLIC
+        $<BUILD_INTERFACE:${CONSOLEPP_GENERATED_INCLUDE_DIR}>
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include/consolepp-${CONSOLEPP_VERSION}>
 )
@@ -117,12 +125,12 @@ target_compile_options(consolepp
 )
 
 generate_export_header(consolepp
-    EXPORT_FILE_NAME "${PROJECT_SOURCE_DIR}/include/consolepp/detail/export.hpp"
+    EXPORT_FILE_NAME "${CONSOLEPP_GENERATED_EXPORT_HEADER}"
 )
 
 configure_file(
     ${PROJECT_SOURCE_DIR}/include/consolepp/version.hpp.in
-    ${PROJECT_SOURCE_DIR}/include/consolepp/version.hpp
+    ${CONSOLEPP_GENERATED_VERSION_HEADER}
     @ONLY)
 
 include(GNUInstallDirs)
@@ -180,6 +188,20 @@ install(
 
 install(
     FILES
+        "${CONSOLEPP_GENERATED_EXPORT_HEADER}"
+    DESTINATION
+        ${CMAKE_INSTALL_INCLUDEDIR}/consolepp-${CONSOLEPP_VERSION}/consolepp/detail
+)
+
+install(
+    FILES
+        "${CONSOLEPP_GENERATED_VERSION_HEADER}"
+    DESTINATION
+        ${CMAKE_INSTALL_INCLUDEDIR}/consolepp-${CONSOLEPP_VERSION}/consolepp
+)
+
+install(
+    FILES
         "${CMAKE_CURRENT_BINARY_DIR}/consolepp-config.cmake"
         "${CMAKE_CURRENT_BINARY_DIR}/consolepp-config-version.cmake"
     DESTINATION
@@ -199,8 +221,8 @@ if (CONSOLEPP_WITH_TESTS)
     target_link_libraries(consolepp_tester
         PRIVATE
             consolepp
-            GTest::GTest
-            GTest::Main
+            GTest::gtest
+            GTest::gtest_main
     )
 
     add_test(consolepp_test consolepp_tester)

@@ -17,20 +17,21 @@ jobs:
           - build_type: Release
 
     env:
-      EXTERNAL_ROOT: /home/runner/3party
       BUILD_TYPE: ${{ matrix.build_type }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - name: Install latest Boost
+      - name: Setup vcpkg (with binary caching)
+        uses: lukka/run-vcpkg@v11
+        with:
+          runVcpkgInstall: false
+          vcpkgDirectory: "${{ github.workspace }}/.vcpkg"
+          vcpkgGitCommitId: "58950f88544e4637524dbd6a01d0317cf4cb77fc"
+
+      - name: Install dependencies
         shell: bash
-        run: |
-          sudo apt-add-repository ppa:mhier/libboost-latest
-          sudo apt install libboost1.74-dev
-
-      - name: Install dependencies from source
-        run: .ci/fetch_system_dependencies.sh
+        run: $VCPKG_ROOT/vcpkg install boost-asio boost-signals2 boost-smart-ptr gtest
 
       - name: Create Build Environment
         run: cmake -E make_directory ${{runner.workspace}}/build
@@ -38,7 +39,7 @@ jobs:
       - name: Configure CMake
         shell: bash
         working-directory: ${{runner.workspace}}/build
-        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_PREFIX_PATH=$EXTERNAL_ROOT
+        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
 
       - name: Build
         shell: bash
@@ -48,7 +49,7 @@ jobs:
       - name: Test
         working-directory: ${{runner.workspace}}/build
         shell: bash
-        run: ctest -C $BUILD_TYPE
+        run: ctest -C $BUILD_TYPE --output-on-failure
 
   build-docs:
     runs-on: ubuntu-latest
