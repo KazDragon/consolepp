@@ -77,18 +77,42 @@ $(function() {
 <p>Console++ is a small framework for interacting with the console on a character-at-a-time basis. Used together with Terminal++ and Munin, this library can form the foundation of any graphical terminal application.</p>
 <h1><a class="anchor" id="autotoc_md1"></a>
 Requirements</h1>
-<p>Console++ requires a C++20 compiler and the following libraries:</p><ul>
-<li>Boost (At least version 1.69.0)</li>
-<li>(For testing only) Google Test</li>
+<ul>
+<li>C++20 compiler</li>
+<li>CMake 3.16+</li>
+<li>Boost 1.69+ (required)</li>
+<li>Google Test (for tests only)</li>
 </ul>
 <h1><a class="anchor" id="autotoc_md2"></a>
-Installation - CMake</h1>
-<p>Console++ can be installed from source using CMake. This requires Boost, and any other dependencies to have been installed beforehand, using their own instructions, or for the call to <code>cmake --configure</code> to be adjusted appropriately (e.g. <code>-DBOOST_ROOT=...</code>). If you do not wish to install into a system directory, and thus avoid the use of sudo, you can also pass <code>-DCMAKE_INSTALL_PREFIX=...</code> into the <code>cmake --configure</code> call. </p><pre class="fragment">git clone https://github.com/KazDragon/consolepp.git &amp;&amp; cd consolepp
-mkdir build &amp;&amp; cd build
-cmake --configure -DCMAKE_BUILD_TYPE=Release ..
-cmake --build .
-sudo cmake --install .
-</pre> <h1><a class="anchor" id="autotoc_md3"></a>
+Build And Install (From Source)</h1>
+<div class="fragment"><div class="line">git clone https://github.com/KazDragon/consolepp.git</div>
+<div class="line">cd consolepp</div>
+<div class="line"> </div>
+<div class="line">cmake -S . -B build \</div>
+<div class="line">  -DCMAKE_BUILD_TYPE=Release \</div>
+<div class="line">  -DCMAKE_INSTALL_PREFIX=&quot;$HOME/.local&quot;</div>
+<div class="line"> </div>
+<div class="line">cmake --build build --config Release</div>
+<div class="line">cmake --install build --config Release</div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md3"></a>
+Dependency Resolution With vcpkg</h1>
+<p>Console++ can resolve dependencies automatically through <code>vcpkg</code>:</p>
+<div class="fragment"><div class="line">cmake -S . -B build \</div>
+<div class="line">  -DCMAKE_BUILD_TYPE=Release \</div>
+<div class="line">  -DCMAKE_TOOLCHAIN_FILE=&quot;$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake&quot;</div>
+</div><!-- fragment --><p>When using manifest mode (<code>vcpkg.json</code> in this repository), configure will trigger dependency installation automatically.</p>
+<h1><a class="anchor" id="autotoc_md4"></a>
+Consume From CMake (Installed Package)</h1>
+<div class="fragment"><div class="line">cmake_minimum_required(VERSION 3.16)</div>
+<div class="line">project(my_app LANGUAGES CXX)</div>
+<div class="line"> </div>
+<div class="line">find_package(consolepp CONFIG REQUIRED)</div>
+<div class="line"> </div>
+<div class="line">add_executable(my_app main.cpp)</div>
+<div class="line">target_link_libraries(my_app PRIVATE KazDragon::consolepp)</div>
+</div><!-- fragment --><p>If installed to a non-system prefix:</p>
+<div class="fragment"><div class="line">cmake -S . -B build -DCMAKE_PREFIX_PATH=&quot;$HOME/.local&quot;</div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md5"></a>
 Features / Roadmap / Progress</h1>
 <ol type="1">
 <li>[x] Basic console handling<ul>
@@ -97,14 +121,14 @@ Features / Roadmap / Progress</h1>
 </ul>
 </li>
 </ol>
-<h1><a class="anchor" id="autotoc_md4"></a>
+<h1><a class="anchor" id="autotoc_md6"></a>
 Status</h1>
 <p>Console++ is automatically testing with GNU g++ 7.5. </p>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Apr 1 2026 09:36:27 for Console++ by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+Generated on Wed Apr 1 2026 09:56:43 for Console++ by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
 </small></address>
 </body>
 </html>

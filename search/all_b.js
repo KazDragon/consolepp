@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['_7econsole_0',['~console',['../classconsolepp_1_1console.html#a78ffb2983109eada50d37a8e4730981e',1,'consolepp::console']]]
+  ['size_0',['size',['../classconsolepp_1_1console.html#adf26271de24381c27ccce9469c5799d8',1,'consolepp::console']]],
+  ['source_1',['Build And Install (From Source)',['../index.html#autotoc_md2',1,'']]],
+  ['status_2',['Status',['../index.html#autotoc_md6',1,'']]]
 ];
