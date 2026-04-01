@@ -1,0 +1,11 @@
+{
+    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+    "name": "consolepp",
+    "version-string": "0.0.0",
+    "dependencies": [
+        "boost-asio",
+        "boost-signals2",
+        "boost-smart-ptr",
+        "gtest"
+    ]
+}
