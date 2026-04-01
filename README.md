@@ -11,19 +11,55 @@ library can form the foundation of any graphical terminal application.
 
 ## Requirements
 
-Console++ requires a C++20 compiler and the following libraries:
-* Boost (At least version 1.69.0)
-* (For testing only) Google Test
+- C++20 compiler
+- CMake 3.16+
+- Boost 1.69+ (required)
+- Google Test (for tests only)
 
-## Installation - CMake
+## Build And Install (From Source)
 
-Console++ can be installed from source using CMake.  This requires Boost, and any other dependencies to have been installed beforehand, using their own instructions, or for the call to `cmake --configure` to be adjusted appropriately (e.g. `-DBOOST_ROOT=...`).  If you do not wish to install into a system directory, and thus avoid the use of sudo, you can also pass `-DCMAKE_INSTALL_PREFIX=...` into the `cmake --configure` call.
+```bash
+git clone https://github.com/KazDragon/consolepp.git
+cd consolepp
 
-    git clone https://github.com/KazDragon/consolepp.git && cd consolepp
-    mkdir build && cd build
-    cmake --configure -DCMAKE_BUILD_TYPE=Release ..
-    cmake --build .
-    sudo cmake --install .
+cmake -S . -B build \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX="$HOME/.local"
+
+cmake --build build --config Release
+cmake --install build --config Release
+```
+
+## Dependency Resolution With vcpkg
+
+Console++ can resolve dependencies automatically through `vcpkg`:
+
+```bash
+cmake -S . -B build \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
+```
+
+When using manifest mode (`vcpkg.json` in this repository), configure will
+trigger dependency installation automatically.
+
+## Consume From CMake (Installed Package)
+
+```cmake
+cmake_minimum_required(VERSION 3.16)
+project(my_app LANGUAGES CXX)
+
+find_package(consolepp CONFIG REQUIRED)
+
+add_executable(my_app main.cpp)
+target_link_libraries(my_app PRIVATE KazDragon::consolepp)
+```
+
+If installed to a non-system prefix:
+
+```bash
+cmake -S . -B build -DCMAKE_PREFIX_PATH="$HOME/.local"
+```
 
 ## Features / Roadmap / Progress
 
