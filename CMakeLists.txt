@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
 cmake_policy(VERSION 3.22)
-project(CONSOLEPP VERSION 0.1.1)
 
 option(CONOSOLEPP_COVERAGE  "Build with code coverage options")
 option(CONSOLEPP_SANITIZE "Build using sanitizers" "")
@@ -12,6 +11,19 @@ message("Building Console++ with code coverage: ${CONSOLEPP_COVERAGE}")
 message("Building Console++ with sanitizers: ${CONSOLEPP_SANITIZE}")
 message("Building Console++ with tests: ${CONSOLEPP_WITH_TESTS}")
 message("Building Console++ with only documentation: ${CONSOLEPP_DOC_ONLY}")
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules")
+
+if (CONSOLEPP_VERSION)
+    include(function-parse_version)
+    parse_version("${CONSOLEPP_VERSION}" "CONSOLEPP_")
+else()
+    include(function-git_version)
+    git_version(CONSOLEPP)
+endif()
+
+message(STATUS "Console++ Version: ${CONSOLEPP_VERSION}")
+project(CONSOLEPP VERSION ${CONSOLEPP_VERSION})
 
 # For producing automatically-generated documentation, we use Doxygen.
 find_package(Doxygen)
