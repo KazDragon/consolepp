@@ -1,5 +1,6 @@
 #include "consolepp/console.hpp"
 
+#include <boost/asio/error.hpp>
 #include <boost/make_unique.hpp>
 #include <sys/ioctl.h>
 #include <termios.h>
@@ -65,6 +66,35 @@ extent get_console_size(int descriptor)
     }();
 
     return {window_size.ws_col, window_size.ws_row};
+}
+
+// ==========================================================================
+// WRITE_ALL
+// ==========================================================================
+void write_all(boost::asio::posix::stream_descriptor &stream, bytes const &data)
+{
+    auto const *position = data.data();
+    auto remaining = data.size();
+
+    while (remaining != 0)
+    {
+        auto error = boost::system::error_code{};
+        auto const bytes_written = stream.write_some(
+            boost::asio::const_buffer{position, remaining}, error);
+
+        if (error == boost::asio::error::interrupted)
+        {
+            continue;
+        }
+
+        if (error)
+        {
+            throw boost::system::system_error{error, "write_some"};
+        }
+
+        position += bytes_written;
+        remaining -= bytes_written;
+    }
 }
 
 }  // namespace
@@ -150,8 +180,7 @@ void console::write(bytes data)
 {
     if (!data.empty())
     {
-        stream_.write_some(
-            boost::asio::const_buffer{&*data.begin(), data.size()});
+        write_all(stream_, data);
     }
 }
 
